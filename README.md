@@ -35,16 +35,19 @@
 
 ## 🧠 Overview
 
-This notebook implements a **research-grade Network Intrusion Detection System (NIDS)** on the widely-used **NSL-KDD benchmark dataset**. It goes well beyond a basic ML pipeline — incorporating production-quality practices such as:
+This project implements a **research-grade Network Intrusion Detection System (NIDS)** using the widely-recognized **NSL-KDD benchmark dataset**. Developed as part of the CS361 Data Science Lab coursework, the goal is to systematically detect malicious network traffic—distinguishing between normal patterns and various cyberattack signatures (like DoS, Probes, U2R, and R2L).
 
-- ✅ **One-Hot Encoding** instead of LabelEncoder for nominal categorical features  
-- ✅ **SMOTE oversampling** to handle critically rare U2R and R2L attack classes  
-- ✅ **Optuna Bayesian hyperparameter search** for XGBoost  
-- ✅ **5-Fold Stratified Cross-Validation** for statistically robust evaluation  
-- ✅ **Threshold Optimization** via Youden's J statistic and F1-maximisation  
-- ✅ **SHAP Explainability** with beeswarm, bar, and waterfall plots  
-- ✅ **Isolation Forest** with training-data-derived contamination (no leakage)  
-- ✅ **PCA Scree Plot** and **attack-category boxplots** for deep EDA  
+In real-world cybersecurity scenarios, zero-day attacks and massive volume floods require sophisticated machine learning architectures that go well beyond basic classification. To reflect production-quality practices, this notebook incorporates an advanced pipeline featuring unsupervised anomaly detection, supervised high-accuracy boosting algorithms, explainable AI (XAI), and rigorous validation techniques.
+
+Key technical highlights applied in this pipeline include:
+- ✅ **One-Hot Encoding** instead of simple LabelEncoding for nominal categorical features (to avoid false ordinal bias).
+- ✅ **SMOTE (Synthetic Minority Over-sampling Technique)** to mathematically balance critically rare U2R and R2L attack classes.
+- ✅ **Optuna Bayesian hyperparameter search** for state-of-the-art XGBoost optimization.
+- ✅ **5-Fold Stratified Cross-Validation** to guarantee statistically robust and reliable evaluation.
+- ✅ **Threshold Optimization** prioritizing Recall over Precision (using Youden's J statistic and F1-maximisation) to catch more threats.
+- ✅ **Explainable AI (XAI) via SHAP** generating beeswarm, bar, and waterfall plots for security analyst audit compliance.
+- ✅ **Isolation Forest** acting as an unsupervised anomaly detector with training-data-derived contamination (preventing data leakage).
+- ✅ **Deep Exploratory Data Analysis (EDA)**, including dimensional reduction (PCA scree plots) and attack-category feature boxplots.
 
 ---
 
@@ -309,54 +312,70 @@ All figures are saved as `.png` files in the working directory when the notebook
 
 ---
 
-## ⚙️ Installation
+## ⚙️ Execution Steps & Installation
 
-### Prerequisites
+### 1. Prerequisites
+Ensure your operating system has the following installed:
+- **Python 3.10+** (Preferably 64-bit for handling larger memory contexts)
+- **Git** (for cloning the repository)
+- **A modern IDE** like VS Code, PyCharm, or simply Jupyter Notebook.
 
-- Python 3.10+
-- pip or conda
-
-### Clone the Repository
-
+### 2. Clone the Repository
+Clone the project repository to your local machine and navigate into the directory:
 ```bash
-git clone https://github.com/<your-username>/network-intrusion-detection.git
-cd network-intrusion-detection
+git clone https://github.com/VrajVaghela/DSlab_Project_Network_Intrusion_detection_Kirtan_Sodagar_U23CS051.git
+cd DSlab_Project_Network_Intrusion_detection_Kirtan_Sodagar_U23CS051
 ```
 
-### Install Dependencies
+### 3. Setup Virtual Environment (Recommended)
+Isolating dependencies ensures a clean run without conflicting packages:
+**Windows:**
+```bash
+python -m venv venv
+.\venv\Scripts\activate
+```
+**Linux / macOS:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
 
-**Option A — pip (recommended):**
+### 4. Install Dependencies
+You must install all machine learning packages required by the pipeline. Run:
 ```bash
 pip install xgboost scikit-learn pandas numpy matplotlib seaborn imbalanced-learn shap optuna jupyter
 ```
+> 💡 *Note: The very first cell of the notebook includes a `%pip install ...` command that acts as a fallback to verify and install anything missing directly within the kernel.*
 
-**Option B — from requirements file (if provided):**
-```bash
-pip install -r requirements.txt
-```
+### 5. Accessing and Running the Project
+The entire NIDS architecture is encapsulated in `network_intrusion_detection.ipynb`. There are multiple ways to execute this:
 
-> 💡 The notebook's first cell also contains `%pip install ...` which installs everything automatically when you run it.
+#### Option A: Running in VS Code (Preferred)
+1. Open the project folder in VS Code.
+2. Open `network_intrusion_detection.ipynb`.
+3. Select the `venv` Python environment you just created as your Notebook Kernel (top-right corner).
+4. Run the notebook sequentially or simply hit **Run All** (`Ctrl+Shift+P` → *Notebook: Run All Cells*). 
+5. The dataset will be downloaded automatically via `fetch_openml` in Section 1.
 
----
+#### Option B: Running in Jupyter Notebook
+1. Start the server from the terminal:
+   ```bash
+   jupyter notebook
+   ```
+2. A browser tab will automatically open. Click on `network_intrusion_detection.ipynb`.
+3. Click "Cell" -> "Run All" from the top menu bar to begin the pipeline.
 
-## ▶️ Usage
-
-### Run in Jupyter
-```bash
-jupyter notebook network_intrusion_detection.ipynb
-```
-
-### Run in VS Code
-1. Open `network_intrusion_detection.ipynb` in VS Code
-2. Select your Python interpreter/kernel (top-right corner)
-3. Click **Run All** (`Ctrl+Shift+P` → *Notebook: Run All Cells*)
-
-### Run All Cells Headlessly
+#### Option C: Headless Execution (CI/CD or Background)
+To run the notebook sequentially from a terminal without a GUI:
 ```bash
 jupyter nbconvert --to notebook --execute network_intrusion_detection.ipynb --output network_intrusion_detection_executed.ipynb
 ```
 
-> ⏱️ **Expected runtime:** ~5–10 minutes on a modern CPU (Optuna 30 trials + SHAP + RF training dominate the time). Internet required for dataset download on first run.
+### 6. Execution Expectations & Hardware Notes
+- **Data Downloading:** The first execution requires an active internet connection to download the NSL-KDD dataset from OpenML.
+- **Runtime:** Expect **~5–10 minutes** of total execution time on a modern CPU. 
+  - *The longest running operations are the Optuna hyperparameter search (30 trials) and the generation of SHAP explanations.*
+- **System Memory:** We recommend at least 8GB of RAM due to SMOTE oversampling and the memory footprint of the SHAP TreeExplainer.
 
 ---
 
